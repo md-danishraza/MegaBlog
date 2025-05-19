@@ -5,6 +5,7 @@ import Header from "./components/header/Header";
 import { login, logout } from "./features/authSlice";
 import authService from "./Services/auth";
 import { useDispatch } from "react-redux";
+import RTE from "./components/RTE";
 function App() {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -26,8 +27,9 @@ function App() {
       <Header />
       <main>
         <h1>MegaBlog</h1>
-        {/* outlet */}
+        outlet
       </main>
+
       <Footer />
     </>
   );

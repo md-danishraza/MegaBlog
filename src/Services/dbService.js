@@ -111,3 +111,5 @@ class DbService {
     }
   }
 }
+
+export default new DbService();
