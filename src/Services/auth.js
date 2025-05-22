@@ -31,7 +31,7 @@ class AuthService {
   async login({ email, password }) {
     // creating server side session
     try {
-      return await this.account.createEmailSession(email, password);
+      return await this.account.createEmailPasswordSession(email, password);
     } catch (error) {
       throw error;
     }

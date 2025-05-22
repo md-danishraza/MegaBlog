@@ -5,9 +5,10 @@ import Header from "./components/header/Header";
 import { login, logout } from "./features/authSlice";
 import authService from "./Services/auth";
 import { useDispatch } from "react-redux";
-import RTE from "./components/RTE";
+
+import { Outlet } from "react-router-dom";
 function App() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   // checking user on initial render
   // if exist then update the user state
@@ -18,20 +19,19 @@ function App() {
         user ? dispatch(login(user)) : dispatch(logout());
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [dispatch]);
 
   if (loading) return <h1>..loading</h1>;
 
   return (
-    <>
+    <section className="flex flex-col min-h-screen">
       <Header />
       <main>
-        <h1>MegaBlog</h1>
-        outlet
+        <Outlet />
       </main>
 
       <Footer />
-    </>
+    </section>
   );
 }
 

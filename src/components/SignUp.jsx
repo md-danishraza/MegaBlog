@@ -7,6 +7,7 @@ import auth from "../Services/auth";
 import Logo from "./Logo";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function SignUp() {
   const dispatch = useDispatch();
@@ -20,14 +21,16 @@ function SignUp() {
       const userData = await auth.createAccount(data);
       if (userData) {
         //   adding user to state
-        const userData = await authService.getCurrentUser();
-        if (userData) dispatch(authLogin(userData));
+        const userData = await auth.getUser();
+
+        if (userData) dispatch(authLogin({ userData }));
         navigate("/");
       }
     } catch (error) {
-      setError(error);
+      setError(error.message || "An error occurred");
     }
   };
+
   return (
     <div className="flex items-center justify-center">
       <div

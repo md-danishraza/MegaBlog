@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import auth from "../Services/auth";
 import Logo from "./Logo";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
@@ -19,14 +19,15 @@ function Login() {
     setError("");
     try {
       // login in aw with formdata
-      const session = auth.login(data);
+      const session = await auth.login(data);
       // if login is successful
       if (session) {
         // get userData from aw session
-        const userData = auth.getUser();
+        const userData = await auth.getUser();
+        // console.log(userData);
         if (userData) {
           // add to user auth state
-          dispatch(authLogin(userData));
+          dispatch(authLogin({ userData }));
         }
         navigate("/");
       }

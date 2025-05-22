@@ -2,6 +2,7 @@ import React from "react";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../Button";
+import Select from "../Select";
 import Input from "../Input";
 import RTE from "../RTE";
 import dbService from "../../Services/dbService";
@@ -21,11 +22,14 @@ function PostForm({ post }) {
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
+  console.log(userData);
 
   const submit = async (data) => {
     // post exist then update
     if (post) {
-      const file = data.image[0] ? dbService.uploadFile(data.image[0]) : null;
+      const file = data.image[0]
+        ? await dbService.uploadFile(data.image[0])
+        : null;
 
       // deleting old image
       if (file) dbService.deleteFile(post.featuredImage);
@@ -42,10 +46,14 @@ function PostForm({ post }) {
       }
     } else {
       // new post is created
-      const file = data.image[0] ? dbService.uploadFile(data.image[0]) : null;
+      const file = data.image[0]
+        ? await dbService.uploadFile(data.image[0])
+        : null;
 
       if (file) {
         // update image field
+        // console.log(data);
+        // console.log(file);
         data.featuredImage = file.$id;
 
         // create a post
@@ -131,7 +139,7 @@ function PostForm({ post }) {
           options={["active", "inactive"]}
           label="Status"
           className="mb-4"
-          {...register("status", { required: true })}
+          {...register("status", { required: false })}
         />
         <Button
           type="submit"

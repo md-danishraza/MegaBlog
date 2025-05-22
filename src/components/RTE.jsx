@@ -14,7 +14,7 @@ function RTE({ name, control, label, defaultValue = "" }) {
           <Editor
             initialValue={defaultValue}
             init={{
-              initialValue: defaultValue,
+              script_url: "/tinymce/tinymce.min.js",
               height: 500,
               menubar: true,
               plugins: [

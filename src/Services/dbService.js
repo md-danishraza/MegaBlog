@@ -58,7 +58,9 @@ class DbService {
         conf.awCollectionId,
         queries
       );
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getPost(slug) {
