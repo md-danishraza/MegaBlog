@@ -1,15 +1,18 @@
 import React from "react";
-
+import { useState } from "react";
 import Logo from "../Logo";
 import Logout from "./Logout";
-import { Link } from "react-router-dom";
+
 import Container from "../Container";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { BsMenuButtonWide } from "react-icons/bs";
+import { IoClose } from "react-icons/io5";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
-  const navigate = useNavigate();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
     {
@@ -40,24 +43,44 @@ function Header() {
   ];
 
   return (
-    <header className="py-3 shadow bg-gray-500">
+    <header className="py-3 shadow bg-[#241b35]">
       <Container>
-        <nav className="flex">
+        <nav className="flex items-center justify-between">
           <div className="mr-4">
-            <Link to="/">
-              <Logo width="70px" />
-            </Link>
+            <NavLink to="/">
+              <Logo />
+            </NavLink>
           </div>
-          <ul className="flex ml-auto">
+          {/* Menu Button for Small Devices */}
+          <button
+            className="text-white text-2xl md:hidden "
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <BsMenuButtonWide className="cursor-pointer" />
+          </button>
+
+          {/* Navigation Items */}
+          <ul
+            className={`fixed z-100 top-0 left-0 w-full h-full bg-[#342a45] text-white flex flex-col items-center justify-center space-y-6 transform ${
+              isMenuOpen ? "translate-x-0" : "-translate-x-full"
+            } transition-transform duration-300 md:static md:flex md:flex-row md:justify-end md:space-y-0 md:space-x-4 md:bg-transparent md:translate-x-0`}
+          >
             {navItems.map((item) =>
               item.active ? (
                 <li key={item.name}>
-                  <button
-                    onClick={() => navigate(item.slug)}
-                    className="inline-bock px-6 py-2 duration-200 hover:bg-blue-100 rounded-full"
+                  <NavLink
+                    to={item.slug}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                    }}
+                    className={({ isActive }) =>
+                      `inline-block px-6 py-2 duration-200 rounded-full cursor-pointer ${
+                        isActive ? "bg-[#6c35de]" : "hover:bg-[#6c35de]"
+                      }`
+                    }
                   >
                     {item.name}
-                  </button>
+                  </NavLink>
                 </li>
               ) : null
             )}
@@ -66,6 +89,10 @@ function Header() {
                 <Logout />
               </li>
             )}
+            <IoClose
+              className="md:hidden absolute top-8 right-8 text-3xl cursor-pointer hover:bg-[#6c35de]"
+              onClick={() => setIsMenuOpen(false)}
+            />
           </ul>
         </nav>
       </Container>

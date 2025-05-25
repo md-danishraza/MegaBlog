@@ -22,7 +22,7 @@ function PostForm({ post }) {
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
-  console.log(userData);
+  // console.log(userData);
 
   const submit = async (data) => {
     // post exist then update
@@ -92,8 +92,19 @@ function PostForm({ post }) {
   }, [watch, slugTransform, setValue]);
 
   return (
-    <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-      <div className="w-2/3 px-2">
+    <form
+      onSubmit={handleSubmit(submit)}
+      className="flex flex-wrap bg-[#4d425f] rounded p-4"
+    >
+      <div className="w-full order-2 md:order-1 md:w-2/3 px-2">
+        <RTE
+          label="Content :"
+          name="content"
+          control={control}
+          defaultValue={getValues("content")}
+        />
+      </div>
+      <div className="w-full order-1 md:order-2 md:w-1/3 px-2">
         <Input
           label="Title :"
           placeholder="Title"
@@ -111,14 +122,7 @@ function PostForm({ post }) {
             });
           }}
         />
-        <RTE
-          label="Content :"
-          name="content"
-          control={control}
-          defaultValue={getValues("content")}
-        />
-      </div>
-      <div className="w-1/3 px-2">
+
         <Input
           label="Featured Image :"
           type="file"
@@ -131,7 +135,7 @@ function PostForm({ post }) {
             <img
               src={dbService.getFilePreview(post.featuredImage)}
               alt={post.title}
-              className="rounded-lg"
+              className="rounded-lg w-full "
             />
           </div>
         )}
@@ -144,7 +148,7 @@ function PostForm({ post }) {
         <Button
           type="submit"
           bgColor={post ? "bg-green-500" : undefined}
-          className="w-full"
+          className="w-full bg-[#a364ff] py-2 hover:bg-[#6c35de]"
         >
           {post ? "Update" : "Submit"}
         </Button>

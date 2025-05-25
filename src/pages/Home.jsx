@@ -24,8 +24,8 @@ function Home() {
         <Container>
           <div className="flex flex-wrap">
             <div className="p-2 w-full">
-              <h1 className="text-2xl font-bold hover:text-gray-500">
-                No post available
+              <h1 className="text-2xl font-bold text-[#241b35]">
+                No Post Available
               </h1>
             </div>
           </div>

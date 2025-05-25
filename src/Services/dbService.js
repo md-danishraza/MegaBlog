@@ -107,7 +107,7 @@ class DbService {
   }
   getFilePreview(fileId) {
     try {
-      return this.storage.getFilePreview(conf.awBucketId, fileId);
+      return this.storage.getFileView(conf.awBucketId, fileId);
     } catch (error) {
       throw error;
     }

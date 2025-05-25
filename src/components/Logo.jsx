@@ -1,7 +1,8 @@
 import React from "react";
 import logosrc from "../assets/MegaBlog.png";
-function Logo({ width = "100px" }) {
-  return <img src={logosrc} alt="" className="w-[100px]" />;
+import logo2 from "../assets/logo2.svg";
+function Logo({ width = "150px" }) {
+  return <img src={logo2} alt="" style={{ width }} />;
 }
 
 export default Logo;

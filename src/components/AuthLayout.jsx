@@ -9,15 +9,10 @@ function AuthLayout({ children }) {
 
   useEffect(() => {
     // redirect if authStatus is explicitly false
-    if (authStatus === false) {
+    if (!authStatus) {
       navigate("/login");
     }
   }, [authStatus, navigate]);
-
-  // Waiting until authStatus is determined
-  if (authStatus === null) {
-    return <div>Loading...</div>;
-  }
 
   // Render children if authenticated
   return <>{authStatus && children}</>;

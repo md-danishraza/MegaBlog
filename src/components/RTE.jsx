@@ -5,7 +5,9 @@ import { Controller } from "react-hook-form";
 function RTE({ name, control, label, defaultValue = "" }) {
   return (
     <div className="w-full">
-      {label && <label className="inline-block mb-1 pl-1">{label}</label>}
+      {label && (
+        <label className="inline-block mb-1 pl-1 text-white">{label}</label>
+      )}
 
       <Controller
         name={name || "content"}
@@ -15,7 +17,7 @@ function RTE({ name, control, label, defaultValue = "" }) {
             initialValue={defaultValue}
             init={{
               script_url: "/tinymce/tinymce.min.js",
-              height: 500,
+              height: 400,
               menubar: true,
               plugins: [
                 "image",

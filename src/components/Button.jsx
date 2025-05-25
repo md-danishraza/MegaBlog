@@ -3,14 +3,14 @@ import React from "react";
 function Button({
   children,
   type = "button",
-  bgColor = "bg-blue-600",
+
   textColor = "text-white",
   className = "cursor-pointer",
   ...props
 }) {
   return (
     <button
-      className={`${type} ${bgColor}  ${textColor} ${textColor} ${className}`}
+      className={`${type}   ${textColor} ${textColor} ${className} cursor-pointer rounded-2xl`}
       {...props}
       type="submit"
     >

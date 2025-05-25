@@ -21,10 +21,10 @@ function App() {
       .finally(() => setLoading(false));
   }, [dispatch]);
 
-  if (loading) return <h1>..loading</h1>;
+  if (loading) return <div className="loader"></div>;
 
   return (
-    <section className="flex flex-col min-h-screen">
+    <section className="flex flex-col min-h-screen bg-[#ffc7ff]">
       <Header />
       <main>
         <Outlet />

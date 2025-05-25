@@ -23,7 +23,9 @@ function AllPosts() {
     <div className="w-full py-8">
       <Container>
         {!posts.length && (
-          <h1 className="text-center text-2xl">No post Exists</h1>
+          <h1 className="text-2xl font-bold text-[#241b35] text-center">
+            No post Exists
+          </h1>
         )}
         <div className="flex flex-wrap">
           {posts.map((post) => {
