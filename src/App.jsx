@@ -24,7 +24,7 @@ function App() {
   if (loading) return <div className="loader"></div>;
 
   return (
-    <section className="flex flex-col min-h-screen bg-[#ffc7ff]">
+    <section className="flex flex-col min-h-[150vh] md:min-h-screen bg-[#ffc7ff]">
       <Header />
       <main>
         <Outlet />

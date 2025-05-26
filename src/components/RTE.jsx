@@ -1,8 +1,24 @@
-import React from "react";
-import { Editor } from "@tinymce/tinymce-react";
+import React, { useState } from "react";
+import { Editor, EditorState, RichUtils, convertToRaw } from "draft-js";
+import "draft-js/dist/Draft.css";
 import { Controller } from "react-hook-form";
 
-function RTE({ name, control, label, defaultValue = "" }) {
+function RTE({ control, label, defaultValue = "" }) {
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+  const handleChange = (newState) => {
+    setEditorState(newState);
+  };
+
+  const handleKeyCommand = (command) => {
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+    if (newState) {
+      setEditorState(newState);
+      return "handled";
+    }
+    return "not-handled";
+  };
+
   return (
     <div className="w-full">
       {label && (
@@ -10,44 +26,71 @@ function RTE({ name, control, label, defaultValue = "" }) {
       )}
 
       <Controller
-        name={name || "content"}
+        name={"content"}
         control={control}
         render={({ field: { onChange } }) => (
-          <Editor
-            initialValue={defaultValue}
-            init={{
-              script_url: "/tinymce/tinymce.min.js",
-              height: 400,
-              menubar: true,
-              plugins: [
-                "image",
-                "advlist",
-                "autolink",
-                "lists",
-                "link",
-                "image",
-                "charmap",
-                "preview",
-                "anchor",
-                "searchreplace",
-                "visualblocks",
-                "code",
-                "fullscreen",
-                "insertdatetime",
-                "media",
-                "table",
-                "code",
-                "help",
-                "wordcount",
-                "anchor",
-              ],
-              toolbar:
-                "undo redo | blocks | image | bold italic forecolor | alignleft aligncenter bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent |removeformat | help",
-              content_style:
-                "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-            }}
-            onEditorChange={onChange}
-          />
+          <div className="border p-2 ">
+            <div className="editor-container border p-2 min-h-[300px] max-h-[500px] overflow-y-auto bg-[#ffc7ff]">
+              <Editor
+                editorState={editorState}
+                handleKeyCommand={handleKeyCommand}
+                onChange={(newState) => {
+                  handleChange(newState);
+                  onChange(convertToRaw(newState.getCurrentContent()));
+                }}
+              />
+            </div>
+
+            <div className="toolbar mt-2 flex flex-wrap gap-2 space-x-2">
+              <button
+                type="button"
+                className="px-2 py-1  bg-[#a364ff]  hover:bg-[#6c35de] text-white cursor-pointer"
+                onClick={() =>
+                  setEditorState(
+                    RichUtils.toggleInlineStyle(editorState, "BOLD")
+                  )
+                }
+              >
+                Bold
+              </button>
+              <button
+                type="button"
+                className="px-2  bg-[#a364ff] py-2 hover:bg-[#6c35de] text-white cursor-pointer"
+                onClick={() =>
+                  setEditorState(
+                    RichUtils.toggleInlineStyle(editorState, "ITALIC")
+                  )
+                }
+              >
+                Italic
+              </button>
+              <button
+                type="button"
+                className="px-2  bg-[#a364ff] py-2 hover:bg-[#6c35de] text-white cursor-pointer"
+                onClick={() =>
+                  setEditorState(
+                    RichUtils.toggleBlockType(
+                      editorState,
+                      "unordered-list-item"
+                    )
+                  )
+                }
+              >
+                Bullet List
+              </button>
+              <button
+                type="button"
+                className="px-2  bg-[#a364ff] py-2 hover:bg-[#6c35de] text-white cursor-pointer"
+                onClick={() =>
+                  setEditorState(
+                    RichUtils.toggleBlockType(editorState, "ordered-list-item")
+                  )
+                }
+              >
+                Numbered List
+              </button>
+            </div>
+          </div>
         )}
       />
     </div>

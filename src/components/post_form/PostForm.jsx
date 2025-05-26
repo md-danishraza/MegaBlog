@@ -1,5 +1,5 @@
 import React from "react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../Button";
 import Select from "../Select";
@@ -8,6 +8,8 @@ import RTE from "../RTE";
 import dbService from "../../Services/dbService";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { stateToHTML } from "draft-js-export-html";
+import { convertFromRaw } from "draft-js";
 
 function PostForm({ post }) {
   const { register, handleSubmit, watch, setValue, control, getValues } =
@@ -24,7 +26,26 @@ function PostForm({ post }) {
   const userData = useSelector((state) => state.auth.userData);
   // console.log(userData);
 
+  const [isSubmitting, setSubmitting] = useState(false);
   const submit = async (data) => {
+    // change the submitting state
+    setSubmitting(true);
+
+    // console.log(data);
+    if (!data.content.blocks[0].text) {
+      alert("Editor is empty!!!");
+      return;
+    }
+
+    // Convert raw JSON content back to ContentState
+    const contentState = convertFromRaw(data.content);
+    const htmlContent = stateToHTML(contentState); // Convert to HTML
+    // console.log("Converted HTML:", htmlContent);
+    if (htmlContent.length > 1000) {
+      alert("Editor content should not exceed 1000 chars");
+    }
+    data.content = htmlContent;
+
     // post exist then update
     if (post) {
       const file = data.image[0]
@@ -40,6 +61,7 @@ function PostForm({ post }) {
         featuredImage: file ? file.$id : undefined,
       });
 
+      setSubmitting(false);
       //   navigate user
       if (dbPost) {
         navigate(`/post/${dbPost.$id}`);
@@ -52,8 +74,6 @@ function PostForm({ post }) {
 
       if (file) {
         // update image field
-        // console.log(data);
-        // console.log(file);
         data.featuredImage = file.$id;
 
         // create a post
@@ -62,22 +82,27 @@ function PostForm({ post }) {
           userId: userData.$id,
         });
 
+        setSubmitting(false);
+
         if (newPost) {
           navigate(`/post/${newPost.$id}`);
         }
       }
+
+      setSubmitting(false);
     }
   };
 
   //   memoizing the fn
   const slugTransform = useCallback((value) => {
-    if (value && typeof value === "string")
+    if (value && typeof value === "string") {
       return value
         .trim()
         .toLowerCase()
-        .replace(/[^a-zA-Z\d\s]+/g, "-")
-        .replace(/\s/g, "-");
-
+        .replace(/[^a-zA-Z\d\s]+/g, "-") // Replace special characters
+        .replace(/\s+/g, "-") // Replace spaces with hyphen
+        .substring(0, 36); // Limit to max 36 characters
+    }
     return "";
   }, []);
 
@@ -99,7 +124,6 @@ function PostForm({ post }) {
       <div className="w-full order-2 md:order-1 md:w-2/3 px-2">
         <RTE
           label="Content :"
-          name="content"
           control={control}
           defaultValue={getValues("content")}
         />
@@ -147,10 +171,15 @@ function PostForm({ post }) {
         />
         <Button
           type="submit"
-          bgColor={post ? "bg-green-500" : undefined}
           className="w-full bg-[#a364ff] py-2 hover:bg-[#6c35de]"
         >
-          {post ? "Update" : "Submit"}
+          {post
+            ? isSubmitting
+              ? "Updating"
+              : "Update"
+            : isSubmitting
+            ? "submitting"
+            : "Submit"}
         </Button>
       </div>
     </form>

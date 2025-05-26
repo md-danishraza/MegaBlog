@@ -10,6 +10,7 @@ export default function Post() {
   const [post, setPost] = useState(null);
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const userData = useSelector((state) => state.auth.userData);
 
@@ -22,6 +23,8 @@ export default function Post() {
       dbService.getPost(slug).then((post) => {
         if (post) setPost(post);
         else navigate("/");
+
+        setLoading(false);
       });
     } else navigate("/");
   }, [slug, navigate]);
@@ -35,33 +38,40 @@ export default function Post() {
     });
   };
 
+  if (loading) {
+    return <div className="loader"></div>;
+  }
+
   return post ? (
     <div className="py-8">
       <Container>
-        <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
+        <div className="w-full  flex justify-center mb-4 relative border rounded-xl p-2 bg-[#4d425f] ">
           <img
             src={dbService.getFilePreview(post.featuredImage)}
             alt={post.title}
-            className="rounded-xl"
+            className="rounded-xl md:w-[50%]"
           />
 
           {isAuthor && (
             <div className="absolute right-6 top-6">
               <Link to={`/edit-post/${post.$id}`}>
-                <Button bgColor="bg-green-500" className="mr-3">
+                <Button className="mr-3  bg-[#a364ff] p-1 px-2 hover:bg-[#6c35de]">
                   Edit
                 </Button>
               </Link>
-              <Button bgColor="bg-red-500" onClick={deletePost}>
+              <Button
+                onClick={deletePost}
+                className=" bg-[#a364ff] p-1 px-2  hover:bg-[#6c35de]"
+              >
                 Delete
               </Button>
             </div>
           )}
         </div>
-        <div className="w-full mb-6">
+        <div className="w-full  mb-6">
           <h1 className="text-2xl font-bold">{post.title}</h1>
+          <div className="browser-css">{parse(post.content)}</div>
         </div>
-        <div className="browser-css">{parse(post.content)}</div>
       </Container>
     </div>
   ) : null;
