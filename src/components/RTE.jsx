@@ -1,10 +1,23 @@
-import React, { useState } from "react";
-import { Editor, EditorState, RichUtils, convertToRaw } from "draft-js";
+import React, { useState, useEffect } from "react";
+import {
+  Editor,
+  EditorState,
+  RichUtils,
+  convertToRaw,
+  ContentState,
+  convertFromHTML,
+} from "draft-js";
 import "draft-js/dist/Draft.css";
 import { Controller } from "react-hook-form";
 
 function RTE({ control, label, defaultValue = "" }) {
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [editorState, setEditorState] = useState(() =>
+    defaultValue
+      ? EditorState.createWithContent(
+          ContentState.createFromBlockArray(convertFromHTML(defaultValue))
+        )
+      : EditorState.createEmpty()
+  );
 
   const handleChange = (newState) => {
     setEditorState(newState);
@@ -44,7 +57,7 @@ function RTE({ control, label, defaultValue = "" }) {
             <div className="toolbar mt-2 flex flex-wrap gap-2 space-x-2">
               <button
                 type="button"
-                className="px-2 py-1  bg-[#a364ff]  hover:bg-[#6c35de] text-white cursor-pointer"
+                className="px-2 py-1 bg-[#a364ff] hover:bg-[#6c35de] text-white cursor-pointer"
                 onClick={() =>
                   setEditorState(
                     RichUtils.toggleInlineStyle(editorState, "BOLD")
@@ -55,7 +68,7 @@ function RTE({ control, label, defaultValue = "" }) {
               </button>
               <button
                 type="button"
-                className="px-2  bg-[#a364ff] py-2 hover:bg-[#6c35de] text-white cursor-pointer"
+                className="px-2 py-1 bg-[#a364ff] hover:bg-[#6c35de] text-white cursor-pointer"
                 onClick={() =>
                   setEditorState(
                     RichUtils.toggleInlineStyle(editorState, "ITALIC")
@@ -66,7 +79,7 @@ function RTE({ control, label, defaultValue = "" }) {
               </button>
               <button
                 type="button"
-                className="px-2  bg-[#a364ff] py-2 hover:bg-[#6c35de] text-white cursor-pointer"
+                className="px-2 py-1 bg-[#a364ff] hover:bg-[#6c35de] text-white cursor-pointer"
                 onClick={() =>
                   setEditorState(
                     RichUtils.toggleBlockType(
@@ -80,7 +93,7 @@ function RTE({ control, label, defaultValue = "" }) {
               </button>
               <button
                 type="button"
-                className="px-2  bg-[#a364ff] py-2 hover:bg-[#6c35de] text-white cursor-pointer"
+                className="px-2 py-1 bg-[#a364ff] hover:bg-[#6c35de] text-white cursor-pointer"
                 onClick={() =>
                   setEditorState(
                     RichUtils.toggleBlockType(editorState, "ordered-list-item")

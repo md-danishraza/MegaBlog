@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 function AuthLayout({ children }) {
   const authStatus = useSelector((state) => state.auth.status);
-  console.log("auth status ", authStatus);
+  // console.log("auth status ", authStatus);
   const navigate = useNavigate();
 
   useEffect(() => {

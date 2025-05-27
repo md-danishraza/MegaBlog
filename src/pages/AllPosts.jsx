@@ -4,16 +4,24 @@ import Container from "../components/Container";
 import PostCard from "../components/postCard";
 import dbService from "../Services/dbService";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Query } from "appwrite";
 
 function AllPosts() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { userData } = useSelector((store) => store.auth);
+
+  // console.log(userData.$id);
 
   useEffect(() => {
     dbService
-      .getAllPost([])
+      .getAllPost([
+        Query.equal("status", "active"),
+        Query.equal("userId", String(userData.$id)),
+      ])
       .then((posts) => {
-        console.log(posts);
+        // console.log(posts);
         if (posts) setPosts(posts.documents);
         setLoading(false);
       })

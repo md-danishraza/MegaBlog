@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../Button";
@@ -11,16 +11,36 @@ import { useNavigate } from "react-router-dom";
 import { stateToHTML } from "draft-js-export-html";
 import { convertFromRaw } from "draft-js";
 
-function PostForm({ post }) {
-  const { register, handleSubmit, watch, setValue, control, getValues } =
-    useForm({
-      defaultValues: {
+function PostForm({ post = null }) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    getValues,
+    reset,
+    trigger,
+  } = useForm({
+    defaultValues: {
+      title: post?.title || "",
+      content: post?.content || "",
+      status: post?.status || "active",
+      slug: post?.slug || "",
+    },
+  });
+
+  useEffect(() => {
+    if (post) {
+      reset({
         title: post?.title || "",
         content: post?.content || "",
         status: post?.status || "active",
         slug: post?.slug || "",
-      },
-    });
+      });
+      trigger();
+    }
+  }, [post, reset, trigger]);
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
@@ -48,17 +68,23 @@ function PostForm({ post }) {
 
     // post exist then update
     if (post) {
-      const file = data.image[0]
-        ? await dbService.uploadFile(data.image[0])
-        : null;
+      console.log(data);
 
-      // deleting old image
-      if (file) dbService.deleteFile(post.featuredImage);
-
-      // update post
+      // image isn't changed
+      if (!data.image.length) {
+        data.featuredImage = post.featuredImage;
+      } else {
+        const file = data.image[0]
+          ? await dbService.uploadFile(data.image[0])
+          : null;
+        // delete previous image
+        if (file) dbService.deleteFile(post.featuredImage);
+        // update new image
+        data.featuredImage = file.$id;
+      }
+      // // update post
       const dbPost = await dbService.updatePost(post.$id, {
         ...data,
-        featuredImage: file ? file.$id : undefined,
       });
 
       setSubmitting(false);
@@ -106,15 +132,17 @@ function PostForm({ post }) {
     return "";
   }, []);
 
-  React.useEffect(() => {
+  // Manually updating the slug when the title changes
+  useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === "title") {
-        setValue("slug", slugTransform(value.title), { shouldValidate: true });
+        setValue("slug", slugTransform(value.title || ""), {
+          shouldValidate: true,
+        });
       }
     });
-    // cleanup of unmount
     return () => subscription.unsubscribe();
-  }, [watch, slugTransform, setValue]);
+  }, [watch, setValue]);
 
   return (
     <form
@@ -122,6 +150,9 @@ function PostForm({ post }) {
       className="flex flex-wrap bg-[#4d425f] rounded p-4"
     >
       <div className="w-full order-2 md:order-1 md:w-2/3 px-2">
+        {post && (
+          <p className="text-center text-white">Change Before Updating</p>
+        )}
         <RTE
           label="Content :"
           control={control}
