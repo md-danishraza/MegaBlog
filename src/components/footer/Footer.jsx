@@ -14,7 +14,7 @@ function Footer() {
               </div>
               <div>
                 <p className="text-sm text-white text-center">
-                  &copy; Copyright 2023 | Developed by Danish.
+                  &copy; Copyright 2025 | Developed by Danish.
                 </p>
               </div>
             </div>
